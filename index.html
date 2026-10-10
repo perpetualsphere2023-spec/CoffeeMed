@@ -151,7 +151,7 @@
                 const result = await res.json();
                 
                 if (result.success) {
-                    container.innerHTML = `<iframe srcdoc="${encodeURIComponent(result.html)}"></iframe>`;
+                    container.innerHTML = `<iframe srcdoc="${result.html}"></iframe>`;
                     await logQuery('invima', { cum, group }, true);
                 } else {
                     container.innerHTML = `<p style="color:red;">Error al consultar el servicio.</p>`;
