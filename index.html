@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Buscador Especializado - Salud</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; display: grid; grid-template-columns: 380px 1fr; height: 100vh; background: #f4f6f9; }
@@ -151,7 +154,14 @@
                 const result = await res.json();
                 
                 if (result.success) {
-                    container.innerHTML = `<iframe srcdoc="${result.html}"></iframe>`;
+                    const iframe = document.createElement('iframe');
+                    iframe.srcdoc = result.html;
+                    iframe.width = '100%';
+                    iframe.height = '500px';
+                    iframe.style.border = 'none';
+                    iframe.style.borderRadius = '6px';
+                    container.innerHTML = ''; // clear the loading message
+                    container.appendChild(iframe);
                     await logQuery('invima', { cum, group }, true);
                 } else {
                     container.innerHTML = `<p style="color:red;">Error al consultar el servicio.</p>`;
@@ -178,7 +188,14 @@
                 const result = await res.json();
 
                 if (result.success) {
-                    container.innerHTML = `<div>${result.data}</div>`;
+                    const iframe = document.createElement('iframe');
+                    iframe.srcdoc = result.html;
+                    iframe.width = '100%';
+                    iframe.height = '500px';
+                    iframe.style.border = 'none';
+                    iframe.style.borderRadius = '6px';
+                    container.innerHTML = ''; // clear the loading message
+                    container.appendChild(iframe);
                     await logQuery('pos', { text }, true);
                 } else {
                     container.innerHTML = `<p style="color:red;">No se encontraron resultados.</p>`;
