@@ -1,0 +1,628 @@
+:root {
+    --font-family: "Nunito Sans", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-size: 16px;
+    --font-weight: 400;
+    --font-style: normal;
+    --line-height: 1.625;
+
+    --heading-font-family: "Nunito Sans", sans-serif;
+    --heading-font-size: 2.5rem;
+    --heading-line-height: 1.3;
+    --heading-font-weight: 700;
+
+    --accent-color: #186ADC;
+    --el-gradient-start: #1859B4;
+    --el-gradient-end: #0467F1;
+    --background-color: #ffffff;
+    --background-secondary-color: #F0F4F8;
+    --text-primary: #303036;
+    --text-secondary: #3366CC;
+    --border-color: #D4D4E1;
+    --placeholder-color: #6F6F76;
+    --error-color: #ff3d0d;
+
+    --alert-primary: #0065D1;
+    --alert-success: #1CAB55 ;
+    --alert-danger: #E91C1C;
+    --alert-warning: #FFC107 ;
+
+    --el-border-radius: 10px;
+    --el-border-radius-min: 6px;
+    --el-box-shadow: 2px 4px 20px 1px rgba(45, 45, 45, 0.13);
+    --header-box-shadow: 0px 0px 14px 0px rgba(77, 82, 94, 0.15);
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1; /* Hace que el contenido ocupe el espacio restante */
+    padding-bottom: 50px;
+}
+
+
+/* aplicamos Nunito Sans a todo */
+body, button, input, select, textarea {
+  font-family: var(--font-family);
+}
+
+#waitDiv[style*="visibility: hidden"] {
+  height: 0;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+}
+
+/* Por defecto: que no ocupe espacio */
+#dregistro{
+  display: block !important;
+  visibility: visible;
+}
+
+/* Cuando el JS lo ponga visible, que aparezca y sí ocupe espacio */
+#dregistro[style*="visibility: visible"]{
+  display: block !important;
+  visibility: visible;
+}
+
+/* (robusto) si el JS lo vuelve a ocultar */
+#dregistro[style*="visibility: hidden"]{
+  display: none !important;
+  visibility: hidden;
+}
+
+/* Por defecto: que no ocupe espacio */
+#b_atc{
+  display: none !important;
+  visibility: hidden;
+}
+
+/* Cuando el JS lo ponga visible, que aparezca y sí ocupe espacio */
+#b_atc[style*="visibility: visible"]{
+  display: block !important;
+  visibility: visible;
+}
+
+/* (robusto) si el JS lo vuelve a ocultar */
+#b_atc[style*="visibility: hidden"]{
+  display: none !important;
+  visibility: hidden;
+}
+
+
+/* ===== Header Invima ===== */
+.header-invima {
+  width: 100%;
+  padding: .75rem 1rem;
+  background: var(--background-color);
+  box-shadow: var(--header-box-shadow);
+  border-radius: var(--el-border-radius);
+  position: relative;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-invima::before {
+  content:"";
+  position:absolute;
+  inset: 0 0 auto 0;
+  height: 6px;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  background: linear-gradient(90deg,
+              var(--el-gradient-start),
+              var(--el-gradient-end));
+}
+
+.header-invima .logo-invima {
+  width: 220px;
+  max-width: 40vw;
+  height: auto;
+  object-fit: contain;
+}
+
+.header-invima .header-title {
+  font-family: var(--heading-font-family);
+  font-weight: var(--heading-font-weight);
+  font-size: clamp(1rem, 2vw + .6rem, 1.25rem);
+  line-height: var(--heading-line-height);
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  margin: 0;
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+.header-invima .header-actions {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  flex: 0 0 auto;
+}
+
+.header-invima .action-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: #e9f1ff;
+  border: 1px solid rgba(24,106,220,.15);
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease;
+}
+.header-invima .action-icon:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0,0,0,.12);
+  background: #dfeaff;
+}
+
+.header-invima .action-icon img {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.sr-only {
+  position:absolute !important;
+  width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
+  clip: rect(0,0,0,0); white-space:nowrap; border:0;
+}
+
+@media (max-width: 768px) {
+  .header-invima {
+    padding: .75rem .75rem 1rem;
+    border-radius: var(--el-border-radius-min);
+  }
+  .header-invima .logo-invima {
+    width: 160px;
+    max-width: 50vw;
+  }
+  .header-invima .header-title {
+    text-align: left;
+    font-size: 1rem;
+  }
+
+}
+
+/* ===== Bloques de filas ===== */
+.form-row{
+  width: 100%;
+  background: var(--background-color);
+  border-radius: var(--el-border-radius);
+  box-shadow: var(--el-box-shadow);
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+}
+
+.row-title{
+  display: inline-block;
+  font-family: var(--heading-font-family);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: .75rem;
+}
+
+/* ===== Grid 2 columnas (Grupo + Producto) ===== */
+.form-grid-2{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.25rem;
+}
+
+.field .form-label{
+  display: block;
+  font-weight: 600;
+  margin-bottom: .35rem;
+  color: var(--text-primary);
+}
+
+.btn-secondary-invima {
+    background-color: #58afd0;
+    color: #fff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    margin: 10px;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+}
+
+/* ===== Select de grupos (impreso por backend) ===== */
+select{
+  width: 100%;
+  padding: .55rem .9rem;
+  font-family: var(--font-family);
+  font-size: 1rem;
+  color: var(--text-primary);
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--el-border-radius-min);
+  appearance: none;
+
+  /* flecha custom */
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--placeholder-color) 50%),
+    linear-gradient(135deg, var(--placeholder-color) 50%, transparent 50%),
+    linear-gradient(to right, #fff, #fff);
+  background-position:
+    calc(100% - 18px) 50%,
+    calc(100% - 12px) 50%,
+    100% 0;
+  background-size: 6px 6px, 6px 6px, 2.5rem 100%;
+  background-repeat: no-repeat;
+}
+
+select:focus{
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(24,106,220,.15);
+}
+
+/* ===== Inputs ===== */
+.form-input{
+  width: 100%;
+  padding: .55rem .9rem;
+  font-family: var(--font-family);
+  font-size: 1rem;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--el-border-radius-min);
+  background: #fff;
+  transition: border-color .2s ease, box-shadow .2s ease;
+  box-sizing: border-box;
+}
+
+.form-input--sm{ max-width: 240px; }
+
+.form-input:focus{
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(24,106,220,.15);
+}
+
+.form-input--muted[readonly]{
+  background: var(--background-secondary-color);
+  color: var(--placeholder-color);
+  font-style: italic;
+}
+
+/* ===== Radio group ===== */
+.radio-group{
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  flex-wrap: nowrap;
+}
+
+.radio-group.wrap{ flex-wrap: wrap; }
+
+/* radios nativos (usamos accent-color por compatibilidad) */
+.radio-group input[type="radio"]{
+  position: absolute;    /* oculto visualmente pero accesible si usamos pill */
+  opacity: 0;
+}
+
+/* pastillas que actúan como labels */
+.radio-pill{
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .4rem .75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--text-primary);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
+}
+
+.radio-group input[type="radio"]:focus + .radio-pill{
+  box-shadow: 0 0 0 3px rgba(24,106,220,.15);
+}
+
+.radio-group input[type="radio"]:checked + .radio-pill{
+  border-color: var(--accent-color);
+  background: rgba(24,106,220,.08);
+  color: var(--accent-color);
+  font-weight: 700;
+}
+
+.container-detail-product iframe{
+    width: 100%;
+    border: 0;
+    min-height: 1200px;
+}
+
+/* Grid para los 4 iframes ATC */
+.atc-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;   /* 2 columnas en desktop */
+  gap: 1rem 1.25rem;
+  align-items: end;
+}
+
+.atc-field .form-label{
+  margin-bottom: .35rem;
+}
+
+/* Iframes compactos: altura mínima tipo select */
+.iframe-field{
+  width: 100%;
+  height: 70px;                /* altura base tipo control */
+  min-height: 70px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--el-border-radius-min);
+  background: #fff;
+}
+
+/* Quita aire extra del contenedor para que se vea como controles en línea */
+#b_atc .form-row{
+  padding-block: .75rem;
+}
+
+input:disabled,
+select:disabled {
+  background-color: var(--background-secondary-color);
+  color: var(--placeholder-color);
+  border: 1px solid var(--border-color);
+  cursor: not-allowed;
+}
+
+.table-container{
+    align-items: center;
+    overflow: auto;
+    width: 90%;
+}
+
+/* === Tablas Invima (uof_datos_producto, etc.) === */
+/* contenedor general */
+.inv-table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--background-color);
+  font-family: var(--font-family);
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  border-radius: var(--el-border-radius);
+  box-shadow: var(--el-box-shadow);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+/* encabezados generales, sin importar si hay thead o no */
+.inv-table th,
+.inv-table .inv-table__head tr th {
+  background-color: #0D8EBA !important; /* tu color original */
+  color: #fff;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  letter-spacing: 0.007em;
+}
+
+/* celdas */
+.inv-table td {
+  padding: 0.7rem 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border-color);
+  background-color: white;
+}
+
+/* filas */
+.inv-table tbody tr {
+  background: #fff;
+  transition: background-color 0.15s ease;
+}
+
+.inv-table tbody tr:hover {
+  background-color: rgba(13, 142, 186, 0.05);
+}
+
+/* primera columna tipo etiqueta */
+.inv-table th[scope="row"] {
+  width: 25%;
+  font-weight: 600;
+  background: #0D8EBA; /* mismo color */
+  color: #fff;
+}
+
+/* responsive */
+@media (max-width: 768px) {
+  .inv-table th[scope="row"] {
+    width: 35%;
+  }
+
+  .inv-table td {
+    padding: 0.5rem 0.6rem;
+  }
+}
+
+
+/* === Distribución fija y proporcional para TODAS las inv-table === */
+.inv-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* Reparto proporcional de columnas */
+}
+
+/* === Celdas: control de texto y alineación === */
+.inv-table th,
+.inv-table td {
+  text-align: left;
+  vertical-align: middle;
+  padding: 0.75rem 1rem;
+  overflow: hidden;
+}
+
+/* === Si quieres que los textos largos se partan en varias líneas === */
+
+.inv-table th,
+.inv-table td {
+  white-space: normal;
+  word-break: break-word;
+}
+
+
+/* === Cabecera === */
+.inv-table__head th {
+  background-color: #0D8EBA;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border: none;
+}
+
+.col-product-name{
+  width: 30%;
+}
+
+header .gov-co-block{
+    width: 100%;
+    height: 56px;
+    background-color: #3366CC;
+    color: #FFFFFF;
+}
+
+header .gov-co-block img{
+    width: 130px;
+    height: 33px;
+}
+
+header .invima-block{
+    width: 100%;
+    height: 68px;
+    color: #253d4e;
+    padding: 4px 15px;
+}
+
+header .invima-block img{
+    width: 205px;
+    height: 60px;
+    margin-left: 112px;
+}
+
+header .menu-block{
+    width: 100%;
+    height: 65px;
+    color: #253d4e;
+    border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent) !important;
+    box-shadow: 0px 4px 10px 1px rgba(0, 0, 0, 0.08)
+}
+
+.container-login{
+    height:100%;
+}
+
+.text-white{
+    color: #f9f9f9 !important;
+}
+
+.btn-primary-invima{
+    color: #FFFFFF;
+    background-color: #139EC8;
+    border-color: #139EC8;
+}
+
+.btn-green-invima{
+    color: #FFFFFF;
+    background-color: #80ba41;
+    border-color: #80ba41;
+}
+
+.btn-primary-invima:hover{
+    color: #139EC8;
+    background-color: #FFFFFF;
+    border-color: #139EC8;
+}
+
+.btn-green-invima:hover{
+    color: #80ba41;
+    background-color: #FFFFFF;
+    border-color: #80ba41;
+}
+
+.navbar-nav{
+    flex-direction: row !important;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#top_menu .nav-item .nav-link {
+    margin: 0 5px;
+    padding: 20px 10px;
+    color: #253d4e;
+    text-decoration: none;
+    position: relative;
+    font-weight: 600;
+    transition: all 0.4s;
+}
+
+#top_menu .nav-item .nav-link:hover {
+    color: #139EC8;
+
+}
+
+.modal-header{
+    background-color: #139EC8;
+}
+
+footer{
+    height: 350px;
+    background: linear-gradient(135deg, #139ec8 0%, #01599a 100%);
+    padding: 100px 0px;
+}
+
+.container-logo-invima-blanco img {
+    width: 300px;
+}
+
+/* ========= Oscurecer modal de documentos cuando se abre la confirmación ========= */
+
+/* Aseguramos que el contenido tenga contexto de apilamiento */
+#modalUpload .modal-dialog,
+#modalUpload .modal-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* Capa oscura encima de la modal de documentos cuando está en modo "confirmación" */
+#modalUpload.is-confirming .modal-dialog::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.40);   /* nivel de oscuridad */
+    border-radius: 0.5rem;             /* se adapta a tu modal */
+    z-index: 3;                         /* por encima del contenido de esa modal */
+    pointer-events: none;               /* para que no bloquee clicks dentro si algo se ve */
+}
+
+.bg-success-invima {
+    background-color: var(--alert-success) !important;
+    color: #fff !important;
+}
+
+.bg-warning-invima {
+    background-color: var(--alert-warning) !important;
+    color: #000 !important;
+}
+
+
+@media (max-width: 1000px) {
+  .inv-table {
+    font-size: 0.85rem;
+  }
+}
