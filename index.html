@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscador Especializado - Salud</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; display: grid; grid-template-columns: 380px 1fr; height: 100vh; background: #f4f6f9; }
+        aside { background: #fff; padding: 20px; border-right: 1px solid #ddd; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
+        main { padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; }
+        .box { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        input, select, button { width: 100%; padding: 10px; margin-top: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background: #0f766e; color: white; border: none; font-weight: bold; cursor: pointer; }
+        button:hover { background: #115e59; }
+        iframe { width: 100%; height: 500px; border: none; border-radius: 6px; }
+        #results-container { background: #fff; border-radius: 8px; padding: 20px; min-height: 400px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+
+    <!-- Panel Izquierdo: Controles de Autenticación y Buscadores -->
+    <aside>
+        <div id="auth-section">
+            <h3 id="user-email">No autenticado</h3>
+            <button id="login-btn" onclick="loginWithGoogle()">Iniciar sesión con Google</button>
+            <button id="logout-btn" onclick="logout()" style="background: #991b1b; display:none;">Cerrar Sesión</button>
+        </div>
+
+        <hr>
+
+        <!-- Buscador POS / No POS -->
+        <div class="box">
+            <h3>Buscador POS / No POS</h3>
+            <label>Nombre del medicamento</label>
+            <input type="text" id="pos-text" placeholder="Ej: CAPLACIZUMAB">
+            <button onclick="searchPOS()">Buscar POS</button>
+        </div>
+
+        <!-- Buscador Invima (CUM) -->
+        <div class="box">
+            <h3>Buscador Invima (CUM)</h3>
+            <label>Grupo</label>
+            <select id="invima-group">
+                <option value="0">Seleccione Grupo</option>
+                <option value="1">ALIMENTOS</option>
+                <option value="2">MEDICAMENTOS</option>
+                <option value="3">BEBIDAS ALCOHOLICAS</option>
+                <option value="4">COSMETICOS</option>
+                <option value="5">ODONTOLOGICOS</option>
+                <option value="6">PLAGUICIDAS</option>
+                <option value="7">MEDICO QUIRURGICOS</option>
+                <option value="8">ASEO Y LIMPIEZA</option>
+                <option value="9">REACTIVO DIAGNOSTICO</option>
+                <option value="10">HOMEOPATICOS</option>
+                <option value="11">SUPLEM. DIETARIO</option>
+                <option value="12">MED. OFICINALES</option>
+                <option value="13">FITOTERAPEUTICO</option>
+                <option value="25">BIOLOGICOS</option>
+                <option value="27">RADIOFARMACOS</option>
+            </select>
+            <label>Código CUM / N° de expediente</label>
+            <input type="text" id="invima-cum" placeholder="Ej: 20097586">
+            <button onclick="searchInvima()">Buscar Invima</button>
+        </div>
+
+        <!-- Consultas Recientes / Favoritas -->
+        <div class="box">
+            <h3>Mis Favoritos / Recientes</h3>
+            <ul id="history-list" style="padding-left: 15px; font-size: 14px; color: #374151;">
+                <!-- Se cargan dinámicamente -->
+            </ul>
+        </div>
+    </aside>
+
+    <!-- Panel Derecho: Visualizador de Resultados / Iframe -->
+    <main>
+        <h2>Resultados de Consulta</h2>
+        <div id="results-container">
+            <p style="color: #6b7280; text-align: center; margin-top: 150px;">Realiza una consulta a la izquierda para visualizar los datos aquí.</p>
+        </div>
+    </main>
+
+    <script>
+        // Inicializar cliente de Supabase
+        const SUPABASE_URL = 'https://vwchweoianvekbqvazov.supabase.co/rest/v1/';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ3Y2h3ZW9pYW52ZWticXZhem92Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE2NDk4MTYsImV4cCI6MjEwNzIyNTgxNn0.e2EPRyJMxLPk_eiLL9wVO4PfCsaefWIjsQUptASkfIA';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function checkUser() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (user) {
+                document.getElementById('user-email').innerText = user.email;
+                document.getElementById('login-btn').style.display = 'none';
+                document.getElementById('logout-btn').style.display = 'block';
+                loadHistory(user.id);
+            }
+        }
+
+        async function loginWithGoogle() {
+            await supabaseClient.auth.signInWithOAuth({ provider: 'google' });
+        }
+
+        async function logout() {
+            await supabaseClient.auth.signOut();
+            location.reload();
+        }
+
+        async function logQuery(type, params, success) {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) return;
+            await supabaseClient.from('user_queries').insert({
+                user_id: user.id,
+                query_type: type,
+                search_params: params,
+                success: success
+            });
+            loadHistory(user.id);
+        }
+
+        async function loadHistory(userId) {
+            const { data } = await supabaseClient
+                .from('user_queries')
+                .select('*')
+                .eq('user_id', userId)
+                .order('created_at', { ascending: false })
+                .limit(10);
+            
+            const list = document.getElementById('history-list');
+            list.innerHTML = '';
+            data.forEach(item => {
+                const li = document.createElement('li');
+                li.style.marginBottom = '6px';
+                li.innerText = `${item.query_type.toUpperCase()}: ${JSON.stringify(item.search_params)} (${item.success ? 'Éxito' : 'Fallo'})`;
+                list.appendChild(li);
+            });
+        }
+
+        async function searchInvima() {
+            const cum = document.getElementById('invima-cum').value;
+            const group = document.getElementById('invima-group').value;
+            const container = document.getElementById('results-container');
+
+            container.innerHTML = '<p>Consultando Invima...</p>';
+            
+            try {
+                const res = await fetch(`${SUPABASE_URL}/functions/v1/query-invima`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+                    body: JSON.stringify({ cum, group })
+                });
+                const result = await res.json();
+                
+                if (result.success) {
+                    container.innerHTML = `<iframe srcdoc="${encodeURIComponent(result.html)}"></iframe>`;
+                    await logQuery('invima', { cum, group }, true);
+                } else {
+                    container.innerHTML = `<p style="color:red;">Error al consultar el servicio.</p>`;
+                    await logQuery('invima', { cum, group }, false);
+                }
+            } catch (err) {
+                container.innerHTML = `<p style="color:red;">Error de conexión.</p>`;
+                await logQuery('invima', { cum, group }, false);
+            }
+        }
+
+        async function searchPOS() {
+            let text = document.getElementById('pos-text').value.toUpperCase();
+            const container = document.getElementById('results-container');
+
+            container.innerHTML = '<p>Consultando POS Pópuli...</p>';
+
+            try {
+                const res = await fetch(`${SUPABASE_URL}/functions/v1/query-pos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+                    body: JSON.stringify({ text })
+                });
+                const result = await res.json();
+
+                if (result.success) {
+                    container.innerHTML = `<div>${result.data}</div>`;
+                    await logQuery('pos', { text }, true);
+                } else {
+                    container.innerHTML = `<p style="color:red;">No se encontraron resultados.</p>`;
+                    await logQuery('pos', { text }, false);
+                }
+            } catch (err) {
+                container.innerHTML = `<p style="color:red;">Error de conexión.</p>`;
+                await logQuery('pos', { text }, false);
+            }
+        }
+
+        checkUser();
+    </script>
+</body>
+</html>
