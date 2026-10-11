@@ -152,7 +152,6 @@
                     body: JSON.stringify({ cum, group })
                 });
                 const result = await res.json();
-                console.log('Invima Result:', result);
                 if (result.success) {
                     const iframe = document.createElement('iframe');
                     iframe.srcdoc = result.html;
