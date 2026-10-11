@@ -239,6 +239,15 @@
                     });
                 }
         */
+        function getVal(selectId, value) {
+            const select = document.getElementById(selectId);
+            if (!select) return '';
+
+            // Find the option whose value matches (converted to string to handle both numbers and strings)
+            const option = Array.from(select.options).find(opt => opt.value === String(value));
+
+            return option ? option.text : '';
+        }
         async function loadHistory(userId) {
             const { data, error } = await supabaseClient
                 .from('user_queries')
@@ -259,7 +268,7 @@
                 const li = document.createElement('li');
                 li.style.marginBottom = '3px';
                 li.style.cursor = 'pointer'; // Visual cue that the item is clickable
-                li.innerText = `${item.query_type.toUpperCase()}: ${item.search_params.text || item.search_params.cum || 'N/A'})`;
+                li.innerText = `${item.query_type.toUpperCase()}: ${item.search_params.text || (item.search_params.cum + ' ('+getVal('invima-group', item.search_params.group)+')')}`;
                 // Add click handler
                 li.addEventListener('click', () => {
                     const queryType = item.query_type ? item.query_type.toUpperCase() : '';
