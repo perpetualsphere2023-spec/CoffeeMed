@@ -114,6 +114,7 @@
             location.reload();
         }
 
+        /*
         async function logQuery(type, params, success) {
             const { data: { user } } = await supabaseClient.auth.getUser();
             if (!user) return;
@@ -125,6 +126,37 @@
             });
             loadHistory(user.id);
         }
+        */
+        async function logQuery(type, params, success) {
+            const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+            
+            if (authError) {
+                console.error("Error al obtener el usuario:", authError);
+                return;
+            }
+            
+            if (!user) {
+                console.warn("No hay un usuario autenticado. Se cancela el registro.");
+                return;
+            }
+
+            // Capturamos el 'error' que devuelve la inserción
+            const { error: insertError } = await supabaseClient.from('user_queries').insert({
+                user_id: user.id,
+                query_type: type,
+                search_params: params,
+                success: success
+            });
+
+            if (insertError) {
+                console.error("Error al insertar en user_queries:", insertError);
+                return; // Detenemos la ejecución si falló la inserción
+            }
+
+            // Si todo sale bien, cargamos el historial
+            loadHistory(user.id);
+        }
+
 
         async function loadHistory(userId) {
             const { data } = await supabaseClient
