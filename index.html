@@ -100,8 +100,14 @@
         }
 
         async function loginWithGoogle() {
-            await supabaseClient.auth.signInWithOAuth({ provider: 'google' });
+            await supabaseClient.auth.signInWithOAuth({ provider: 'google',
+            options: {
+                // Especifica aquí la ruta exacta a la que debe volver
+                redirectTo: 'https://perpetualsphere2023-spec.github.io/CoffeeMed/index.html', 
+            }, }
+            );
         }
+
 
         async function logout() {
             await supabaseClient.auth.signOut();
