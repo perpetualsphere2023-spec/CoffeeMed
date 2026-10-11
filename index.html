@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Buscador Especializado - Salud v1.0.01</title>
+    <title>Buscador Especializado - Salud v1.0.02</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -196,7 +196,7 @@
                     const iframe = document.createElement('iframe');
                     iframe.srcdoc = result.html;
                     iframe.width = '100%';
-                    iframe.height = '500px';
+                    iframe.height = '100%';
                     iframe.style.border = 'none';
                     iframe.style.borderRadius = '6px';
                     container.innerHTML = ''; // clear the loading message
@@ -211,7 +211,7 @@
                 await logQuery('invima', { cum, group }, false);
             }
         }
-
+        /*
         async function searchPOS() {
             let text = document.getElementById('pos-text').value.toUpperCase();
             const container = document.getElementById('results-container');
@@ -245,7 +245,26 @@
                 await logQuery('pos', { text }, false);
             }
         }
+        */
 
+        async function searchPOS() {
+            let text = document.getElementById('pos-text').value.toUpperCase();
+            const container = document.getElementById('results-container');
+            container.innerHTML = '<p>Consultando POS Pópuli...</p>';
+            const iframe = document.createElement('iframe');
+            iframe.addEventListener('load', () => {
+                console.log('The iframe has fully loaded the new src:', iframe.src);
+            });
+            iframe.src = 'about:blank';
+            iframe.width = '100%';
+            iframe.height = '100%';
+            iframe.style.border = 'none';
+            iframe.style.borderRadius = '6px';
+            container.innerHTML = ''; // clear the loading message
+            container.appendChild(iframe);
+            iframe.src = 'https://pospopuli.minsalud.gov.co/PospopuliWeb/paginas/resultadoprevio.aspx?tipo=0&busqueda=' + encodeURIComponent(text);
+            await logQuery('pos', { text }, true);      
+        }
         checkUser();
     </script>
 </body>
