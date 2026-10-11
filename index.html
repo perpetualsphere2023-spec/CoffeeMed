@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Buscador Especializado - Salud v1.0.04</title>
@@ -8,19 +9,83 @@
     <meta http-equiv="Expires" content="0">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; display: grid; grid-template-columns: 380px 1fr; height: 100vh; background: #f4f6f9; }
-        aside { background: #fff; padding: 20px; border-right: 1px solid #ddd; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; }
-        main { padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; }
-        .box { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        input, select, button { width: 100%; padding: 10px; margin-top: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button { background: #0f766e; color: white; border: none; font-weight: bold; cursor: pointer; }
-        button:hover { background: #115e59; }
-        iframe { width: 100%; height: 100%; border: none; border-radius: 6px; }
-        #results-container { background: #fff; border-radius: 8px; padding: 20px; min-height: 85%; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            height: 100vh;
+            background: #f4f6f9;
+        }
+
+        aside {
+            background: #fff;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        main {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+        }
+
+        .box {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        input,
+        select,
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #0f766e;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #115e59;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 6px;
+        }
+
+        #results-container {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 85%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
     </style>
     <link rel="icon" href="favicon.ico" sizes="any">
     <link rel="apple-touch-icon" href="coffeemed-icon-512.png">
 </head>
+
 <body>
 
     <!-- Panel Izquierdo: Controles de Autenticación y Buscadores -->
@@ -81,7 +146,8 @@
     <main>
         <h2>Resultados de Consulta</h2>
         <div id="results-container">
-            <p style="color: #6b7280; text-align: center; margin-top: 150px;">Realiza una consulta a la izquierda para visualizar los datos aquí.</p>
+            <p style="color: #6b7280; text-align: center; margin-top: 150px;">Realiza una consulta a la izquierda para
+                visualizar los datos aquí.</p>
         </div>
     </main>
 
@@ -102,11 +168,13 @@
         }
 
         async function loginWithGoogle() {
-            await supabaseClient.auth.signInWithOAuth({ provider: 'google',
-            options: {
-                // Especifica aquí la ruta exacta a la que debe volver
-                redirectTo: 'https://perpetualsphere2023-spec.github.io/CoffeeMed/index.html', 
-            }, }
+            await supabaseClient.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    // Especifica aquí la ruta exacta a la que debe volver
+                    redirectTo: 'https://perpetualsphere2023-spec.github.io/CoffeeMed/index.html',
+                },
+            }
             );
         }
 
@@ -131,12 +199,12 @@
         */
         async function logQuery(type, params, success) {
             const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
-            
+
             if (authError) {
                 console.error("Error al obtener el usuario:", authError);
                 return;
             }
-            
+
             if (!user) {
                 console.warn("No hay un usuario autenticado. Se cancela el registro.");
                 return;
@@ -167,7 +235,7 @@
                 .eq('user_id', userId)
                 .order('created_at', { ascending: false })
                 .limit(10);
-            
+
             const list = document.getElementById('history-list');
             list.innerHTML = '';
             data.forEach(item => {
@@ -184,7 +252,7 @@
             const container = document.getElementById('results-container');
 
             container.innerHTML = '<p>Consultando Invima...</p>';
-            
+
             try {
                 const res = await fetch(`${SUPABASE_URL}/functions/v1/query-invima`, {
                     method: 'POST',
@@ -253,52 +321,52 @@
             container.innerHTML = '<p>Consultando POS Pópuli...</p>';
             const iframe = document.createElement('iframe');
             iframe.addEventListener('load', () => {
-                if(iframe.src === 'about:blank') return; // Evita ejecutar en la carga inicial del iframe vacío
-                try {
-                    // 1. Cross-browser standard for accessing the internal document safely
-                    const iframeDocument = iframe.contentDocument || (iframe.contentWindow ? iframe.contentWindow.document : null);
-                    
-                    if (!iframeDocument) {
-                    console.error("Could not access the iframe document structure.");
-                    return;
-                    }
+                if (iframe.src === 'about:blank') return; // Evita ejecutar en la carga inicial del iframe vacío
+                setTimeout(() => {
+                    try {
+                        // 1. Cross-browser standard for accessing the internal document safely
+                        const iframeDocument = iframe.contentDocument || (iframe.contentWindow ? iframe.contentWindow.document : null);
 
-                    // 2. Fetch the absolute full HTML string of the entire page
-                    // documentElement represents the root <html> tag.
-                    let fullHtml = "";
-                    if (iframeDocument.documentElement) {
-                    fullHtml = iframeDocument.documentElement.innerHTML;
-                    } else if (iframeDocument.body) {
-                    // Fallback for extremely rare environments or detached DOMs
-                    fullHtml = iframeDocument.body.innerHTML; 
-                    }
+                        if (!iframeDocument) {
+                            console.error("Could not access the iframe document structure.");
+                            return;
+                        }
 
-                    // 3. Perform your search
-                    const searchString = "¿Por qué no encontré resultados?"; 
-                    if (fullHtml && fullHtml.includes(searchString)) {
-                        console.log(`Encontró resultados: "${searchString}"`);
-                    } else {
-                        console.log("No encontró resultados.");
-                    }
+                        // 2. Fetch the absolute full HTML string of the entire page
+                        // documentElement represents the root <html> tag.
+                        let fullHtml = "";
+                        if (iframeDocument.documentElement) {
+                            fullHtml = iframeDocument.documentElement.innerHTML;
+                        } else if (iframeDocument.body) {
+                            // Fallback for extremely rare environments or detached DOMs
+                            fullHtml = iframeDocument.body.innerHTML;
+                        }
 
-                } catch (error) {
-                    // This catch block will immediately trigger if the browser blocks a Cross-Origin URL request
-                    console.error("Browser Security Blocked Reading: Ensure the iframe URL matches your exact domain, protocol, and port.", error);
-                }
+                        // 3. Perform your search
+                        const searchString = "¿Por qué no encontré resultados?";
+                        if (fullHtml && fullHtml.includes(searchString)) {
+                            console.log(`Encontró resultados: "${searchString}"`);
+                        } else {
+                            console.log("No encontró resultados.");
+                        }
+
+                    } catch (error) {
+                        // This catch block will immediately trigger if the browser blocks a Cross-Origin URL request
+                        console.error("Browser Security Blocked Reading: Ensure the iframe URL matches your exact domain, protocol, and port.", error);
+                    }
+                }, 2000);
                 //await logQuery('pos', { text }, true);
             });
-            iframe.src = 'about:blank';
+            iframe.src = 'https://pospopuli.minsalud.gov.co/PospopuliWeb/paginas/resultadoprevio.aspx?tipo=0&busqueda=' + encodeURIComponent(text);
             iframe.width = '100%';
             iframe.height = '100%';
             iframe.style.border = 'none';
             iframe.style.borderRadius = '6px';
             container.innerHTML = ''; // clear the loading message
             container.appendChild(iframe);
-            setTimeout(() => {
-                iframe.src = 'https://pospopuli.minsalud.gov.co/PospopuliWeb/paginas/resultadoprevio.aspx?tipo=0&busqueda=' + encodeURIComponent(text);
-            }, 1000); // Delay to ensure the iframe is attached before setting src    
         }
         checkUser();
     </script>
 </body>
+
 </html>
